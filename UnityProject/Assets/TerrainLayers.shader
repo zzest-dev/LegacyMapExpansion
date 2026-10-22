@@ -40,15 +40,14 @@ Properties {
         ZWrite On
         Cull Back
         CGPROGRAM
-        #pragma surface surf StandardSpecular fullforwardshadows addshadow vertex:vert
+        #pragma surface surf Lambert fullforwardshadows addshadow vertex:vert
         #pragma target 3.0
         sampler2D _Diffuse1, _DiffuseR, _DiffuseG, _DiffuseB;
-        sampler2D _Normal1, _NormalG, _NormalB, _SpecularTexture;
+        sampler2D _Normal1, _NormalG, _NormalB;
         float _UVTileDif, _UVTileR, _UVTileG, _UVTileB;
         float _WorldPoseDif, _WorldPoseR, _WorldPoseG, _WorldPoseB;
         float _UVTileDifN, _UVTileGN, _UVTileBN;
         float _WorldPoseDifN, _WorldPoseGN, _WorldPoseBN;
-        float _Specular, _Glossines, _UVTileSpec, _UVWWorldPos_Spec;
         struct Input {
             float3 worldPos;
             float2 meshUV;
@@ -62,7 +61,7 @@ Properties {
         float2 LayerUV(Input data, float world, float tile) {
             return lerp(data.meshUV, data.worldPos.xz, saturate(world)) * tile;
         }
-        void surf(Input data, inout SurfaceOutputStandardSpecular output) {
+        void surf(Input data, inout SurfaceOutput output) {
             float4 weights = float4(saturate(1.0-data.color.r-data.color.g-data.color.b),data.color.rgb);
             weights /= max(dot(weights,float4(1,1,1,1)),0.001);
             output.Albedo = tex2D(_Diffuse1,LayerUV(data,_WorldPoseDif,_UVTileDif)).rgb*weights.x
@@ -74,10 +73,9 @@ Properties {
                 + UnpackNormal(tex2D(_NormalG,LayerUV(data,_WorldPoseGN,_UVTileGN)))*weights.z
                 + UnpackNormal(tex2D(_NormalB,LayerUV(data,_WorldPoseBN,_UVTileBN)))*weights.w;
             output.Normal = normalize(normal+float3(0,0,0.00001));
-            fixed4 specular = tex2D(_SpecularTexture,LayerUV(data,_UVWWorldPos_Spec,_UVTileSpec));
-            output.Specular = saturate(specular.rgb*_Specular);
-            output.Smoothness = saturate(_Glossines);
-            output.Occlusion = 1;
+            output.Specular = 0;
+            output.Gloss = 0;
+            output.Emission = 0;
             output.Alpha = 1;
         }
         ENDCG

@@ -18,6 +18,7 @@ namespace LegacyMapExpansion
         private readonly Dictionary<string, PhysicMaterial> physics = new Dictionary<string, PhysicMaterial>(StringComparer.Ordinal);
         private readonly HashSet<int> cached = new HashSet<int>();
         private readonly Dictionary<string, GameObject> loaded = new Dictionary<string, GameObject>(StringComparer.Ordinal);
+        private Shader terrainShader;
 
         internal NativeGroundMaterials(byte[] json, HashSet<int> excluded, Dictionary<string, Material> fallback, Func<string, GameObject> load = null)
         {
@@ -47,7 +48,7 @@ namespace LegacyMapExpansion
                     string resource;
                     if (sources.TryGetValue(name, out resource)) Cache(Load(resource));
                     if ((!materials.TryGetValue(name, out material) || !material) && fallback.TryGetValue(name, out material) && material)
-                        materials[name] = material;
+                        materials[name] = material = PrepareFallback(material);
                     if (!materials.TryGetValue(name, out material) || !material)
                     {
                         if (warned.Add(name)) Plugin.Warn("Native ground material unavailable: " + name + "; keeping the original terrain tile.");
@@ -89,11 +90,26 @@ namespace LegacyMapExpansion
             if (!prefab || !cached.Add(prefab.GetInstanceID())) return;
             foreach (var renderer in prefab.GetComponentsInChildren<Renderer>(true))
                 foreach (var material in renderer.sharedMaterials)
-                    if (material && !excluded.Contains(material.GetInstanceID())) materials[Name(material.name)] = material;
+                    if (material && !excluded.Contains(material.GetInstanceID()))
+                    {
+                        materials[Name(material.name)] = material;
+                        if (material.shader && material.shader.name == "Custom/VertexColorMix4" && material.shader.isSupported)
+                            terrainShader = material.shader;
+                    }
             foreach (var mapping in prefab.GetComponentsInChildren<PhMatByTriangleIndex>(true))
                 if (mapping.matToPhMat != null)
                     foreach (var run in mapping.matToPhMat)
                         if (run.phMat) physics[Name(run.phMat.name)] = run.phMat;
+        }
+
+        private Material PrepareFallback(Material source)
+        {
+            if (!source.shader || source.shader.name != "LegacyMapExpansion/TerrainLayers") return source;
+            var shader = terrainShader ? terrainShader : Shader.Find("Custom/VertexColorMix4");
+            if (!shader || !shader.isSupported) return source;
+            var material = new Material(source) { name = source.name, shader = shader, renderQueue = -1 };
+            material.shaderKeywords = source.shaderKeywords;
+            return material;
         }
 
         private GameObject Load(string path)
