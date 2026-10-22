@@ -1,0 +1,30 @@
+{
+  "baseMapSha256": "ce926e56ad0c99631258f4493124d887240f461507b0bf74dd5c85ff162d50c4",
+  "baseVersion": 15,
+  "importedVersion": 16,
+  "instances": 235579,
+  "keptNativeLogic": 227773,
+  "omittedResources": {},
+  "deduplicatedExportedModels": 8,
+  "importedRegions": [
+    {
+      "name": "school",
+      "x": -2095,
+      "z": 330,
+      "radius": 160
+    },
+    {
+      "name": "office",
+      "x": -95,
+      "z": 150,
+      "radius": 160
+    },
+    {
+      "name": "doner",
+      "x": -1588,
+      "z": 2195,
+      "radius": 90
+    }
+  ],
+  "importedSource": "10.18 baseline with selected 10.24 school, office and park doner"
+}

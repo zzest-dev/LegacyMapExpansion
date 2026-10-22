@@ -1,0 +1,422 @@
+{
+  "bindings": [
+    {
+      "name": "Asphalt1",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt10",
+      "resource": "Ground/x -1 z 0"
+    },
+    {
+      "name": "Asphalt12",
+      "resource": "Ground/x -1 z 2"
+    },
+    {
+      "name": "Asphalt2",
+      "resource": "Ground/x -2 z -1"
+    },
+    {
+      "name": "Asphalt3",
+      "resource": "Ground/x -1 z 1"
+    },
+    {
+      "name": "Asphalt5",
+      "resource": "Ground/x -10 z 10"
+    },
+    {
+      "name": "Asphalt7",
+      "resource": "Ground/x -10 z 10"
+    },
+    {
+      "name": "Asphalt8",
+      "resource": "Ground/x -1 z 1"
+    },
+    {
+      "name": "Asphalt9",
+      "resource": "Ground/x -1 z 8"
+    },
+    {
+      "name": "Asphalt_3",
+      "resource": "Ground/x -7 z 11"
+    },
+    {
+      "name": "Concrete33",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Concrete_tile_10",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Grass_1",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Land_1",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Land_2",
+      "resource": "Ground/x -1 z 0"
+    },
+    {
+      "name": "Land_3",
+      "resource": "Ground/x -1 z 0"
+    },
+    {
+      "name": "Land_5",
+      "resource": "Ground/x -1 z 10"
+    },
+    {
+      "name": "Land_7",
+      "resource": "Ground/x -1 z 10"
+    },
+    {
+      "name": "Land_8",
+      "resource": "Ground/x -1 z 1"
+    },
+    {
+      "name": "Land_9",
+      "resource": "Ground/x -1 z 2"
+    },
+    {
+      "name": "Metal_32",
+      "resource": "Ground/x -1 z 10"
+    },
+    {
+      "name": "NewConcrete_3",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "NewConcrete_5",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "NewConcrete_6",
+      "resource": "Ground/x -1 z -3"
+    },
+    {
+      "name": "OffRoad_2",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "OffRoad_3",
+      "resource": "Ground/x -10 z 13"
+    },
+    {
+      "name": "OffRoad_4",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "OffRoad_5",
+      "resource": "Ground/x -1 z 2"
+    },
+    {
+      "name": "Rock_1",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Tile_1",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Tile_2",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Tile_3",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Wall_1",
+      "resource": "Ground/x -10 z 6"
+    },
+    {
+      "name": "Wall_2",
+      "resource": "Ground/x -1 z -3"
+    }
+  ],
+  "surfaces": [
+    {
+      "name": "Asphalt1",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt10",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt12",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt14",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt15",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt17",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt2",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt3",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt5",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt7",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt8",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt9",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Asphalt_3",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Bordur_1",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Brick_14",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Brick_1_0",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Concrete33",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Concrete_1",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Concrete_tile_10",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Concrete_tile_58",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Concrete_tile_59",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Concrete_tile_61",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Concrete_tile_63",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Concrete_tile_94",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Grass_1",
+      "physics": "Trava",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Land_1",
+      "physics": "Pesok",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Land_11",
+      "physics": "Pesok",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Land_2",
+      "physics": "Trava",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Land_3",
+      "physics": "Pesok",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Land_5",
+      "physics": "Pesok",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Land_7",
+      "physics": "Pesok",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Land_8",
+      "physics": "Pesok",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Land_9",
+      "physics": "Pesok",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Material #263582",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Metal_32",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Metal_64",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "NewConcrete_3",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "NewConcrete_5",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "NewConcrete_6",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "OffRoad_2",
+      "physics": "Pesok",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "OffRoad_3",
+      "physics": "Pesok",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "OffRoad_4",
+      "physics": "Pesok",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "OffRoad_5",
+      "physics": "Pesok",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Rock_1",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Rock_8",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Tile_1",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Tile_2",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Tile_3",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Tile_4",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Tile_5",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Tile_8",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Wall_1",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Wall_2",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Wall_25",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Wall_28",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    },
+    {
+      "name": "Wall_3",
+      "physics": "Beton",
+      "resource": "Ground/x -1 z -1"
+    }
+  ]
+}

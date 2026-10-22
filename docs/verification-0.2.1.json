@@ -1,0 +1,64 @@
+{
+  "map": {
+    "mapRecords": 235579,
+    "blocks": 6858,
+    "mapFormat": 15,
+    "nativeVisibilityMetric": true,
+    "viewLineRadiusIncluded": true,
+    "nativeLogicPreserved": true,
+    "nativeLogicRecords": 3726,
+    "outsideRegionsPreserved": true,
+    "replacedStaticInstances": 6469,
+    "importedStaticInstances": 7806,
+    "skipped": {},
+    "duplicatePlacementsRemoved": 8,
+    "excludedNewCafe": true,
+    "provisional": false
+  },
+  "bundle": {
+    "prefabs": 257,
+    "groundTiles": 47,
+    "renderers": 1032,
+    "colliders": 902,
+    "groundRaycastsPassed": 47,
+    "packedMeshInstances": 989
+  },
+  "runtime": {
+    "externalPluginConstructor": true,
+    "prefabs": 257,
+    "grounds": 47,
+    "nativeGroundMaterialSlots": 488,
+    "nativeGroundSurfaceSlots": 488,
+    "behaviourPrefabs": 257,
+    "streamHook": true,
+    "disabledPassThrough": true
+  },
+  "behaviour": {
+    "streetLights": 4,
+    "distanceLights": 190,
+    "destructibles": 8,
+    "dynamicSigns": 25,
+    "dayNightCycle": true,
+    "cachedTemplates": true
+  },
+  "regional-ground": {
+    "tiles": 12,
+    "clippedToRegions": true,
+    "boundaryHeightBlended": true
+  },
+  "dllSha256": "d3cf74e259de3ccc7dc4d088370528c8ef3902d57c8faeda755b0fd209beb577",
+  "dllBytes": 166970368,
+  "repairs": {
+    "nativeMapLoader": true,
+    "nativeItems": 235579,
+    "nativeNodes": 7161,
+    "spatialBranchesChecked": 2428,
+    "plants": 3,
+    "transparentMaterials": 5,
+    "parkingBeyondOldBoundary": true,
+    "glassTransmission": true,
+    "barrierArmMesh": true,
+    "barrierDestruction": true,
+    "barrierArmImpactRelease": true
+  }
+}

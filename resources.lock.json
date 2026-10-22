@@ -1,0 +1,25 @@
+{
+  "version": "0.2.1",
+  "files": {
+    "Resources/compatibility.json": {
+      "bytes": 662,
+      "sha256": "0e182568a1acf98d9fcc260a901bf6b22632e5572efa5d89aec3302ffae9e64b"
+    },
+    "Resources/map1018.bundle": {
+      "bytes": 136552520,
+      "sha256": "56031f744e56644c728196df8e4bd4f7153d8e930fe0a622642d35bc8fe301a0"
+    },
+    "Resources/map94-patched.bytes": {
+      "bytes": 30385728,
+      "sha256": "b06270b0f154abf5ced1c547447ed824e5ff817967510ec27dc85b8a51e6d0f7"
+    },
+    "Resources/native-ground-materials.json": {
+      "bytes": 8803,
+      "sha256": "beaa5101ee932cda689188c478f660a7e23cabe03130a04aa6f94055742f7d61"
+    },
+    "PortingInputs/UnityAssets.zip": {
+      "bytes": 268451878,
+      "sha256": "30fb734ae7d81de3d50e9971f956eeb4420004d467f7176e852d243582b12d93"
+    }
+  }
+}
