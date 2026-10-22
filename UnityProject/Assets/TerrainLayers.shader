@@ -36,63 +36,51 @@ Properties {
 	}
     SubShader {
         Tags { "RenderType"="Opaque" "Queue"="Geometry" }
-        ZWrite On Cull Back
-        
-        Pass {
-            Name "FORWARDBASE"
-            Tags { "LightMode"="ForwardBase" }
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma target 3.0
-            #pragma multi_compile_fog
-            #pragma multi_compile __ UNITY_UI_CLIP_RECT
-            #include "UnityCG.cginc"
-            #include "Lighting.cginc"
-            #include "UnityUI.cginc"
-            sampler2D _Diffuse1;
-            float4 _Diffuse1_ST;
-            sampler2D _DiffuseB;
-            float4 _DiffuseB_ST;
-            sampler2D _DiffuseG;
-            float4 _DiffuseG_ST;
-            sampler2D _DiffuseR;
-            float4 _DiffuseR_ST;
-            float _UVTileB;
-            float _UVTileDif;
-            float _UVTileG;
-            float _UVTileR;
-            float _WorldPoseB;
-            float _WorldPoseDif;
-            float _WorldPoseG;
-            float _WorldPoseR;
-            struct appdata { float4 vertex : POSITION; float3 normal : NORMAL; float2 uv : TEXCOORD0; float2 uv2 : TEXCOORD1; fixed4 color : COLOR; };
-            struct v2f { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; float3 normal : TEXCOORD1; float3 world : TEXCOORD2; float4 local : TEXCOORD3; float2 uv2 : TEXCOORD4; fixed4 color : COLOR; UNITY_FOG_COORDS(5) };
-            v2f vert(appdata v) {
-                v2f o; o.pos = UnityObjectToClipPos(v.vertex); o.uv = v.uv; o.uv2 = v.uv2;
-                o.normal = UnityObjectToWorldNormal(v.normal); o.world = mul(unity_ObjectToWorld, v.vertex).xyz;
-                o.local = v.vertex; o.color = v.color; UNITY_TRANSFER_FOG(o,o.pos); return o;
-            }
-            fixed4 frag(v2f i) : SV_Target {
-                fixed4 c = fixed4(1,1,1,1);
-                float2 uvDif = lerp(i.uv, i.world.xz, saturate(_WorldPoseDif)) * _UVTileDif;
-                float2 uvR = lerp(i.uv, i.world.xz, saturate(_WorldPoseR)) * _UVTileR;
-                float2 uvG = lerp(i.uv, i.world.xz, saturate(_WorldPoseG)) * _UVTileG;
-                float2 uvB = lerp(i.uv, i.world.xz, saturate(_WorldPoseB)) * _UVTileB;
-                float baseWeight = saturate(1.0 - i.color.r - i.color.g - i.color.b);
-                float4 weights = float4(baseWeight, i.color.rgb);
-                weights /= max(dot(weights, float4(1,1,1,1)), 0.001);
-                c = tex2D(_Diffuse1, uvDif) * weights.x + tex2D(_DiffuseR, uvR) * weights.y + tex2D(_DiffuseG, uvG) * weights.z + tex2D(_DiffuseB, uvB) * weights.w;
-                float3 n = normalize(i.normal);
-                float3 lightDir = normalize(UnityWorldSpaceLightDir(i.world));
-                half3 illumination = max(ShadeSH9(half4(n, 1)), half3(0.2,0.2,0.2)) + _LightColor0.rgb * saturate(dot(n, lightDir));
-                c.rgb *= illumination;
-                c.a = 1;
-                UNITY_APPLY_FOG(i.fogCoord, c);
-                return c;
-            }
-            ENDCG
+        Blend Off
+        ZWrite On
+        Cull Back
+        CGPROGRAM
+        #pragma surface surf StandardSpecular fullforwardshadows addshadow vertex:vert
+        #pragma target 3.0
+        sampler2D _Diffuse1, _DiffuseR, _DiffuseG, _DiffuseB;
+        sampler2D _Normal1, _NormalG, _NormalB, _SpecularTexture;
+        float _UVTileDif, _UVTileR, _UVTileG, _UVTileB;
+        float _WorldPoseDif, _WorldPoseR, _WorldPoseG, _WorldPoseB;
+        float _UVTileDifN, _UVTileGN, _UVTileBN;
+        float _WorldPoseDifN, _WorldPoseGN, _WorldPoseBN;
+        float _Specular, _Glossines, _UVTileSpec, _UVWWorldPos_Spec;
+        struct Input {
+            float3 worldPos;
+            float2 meshUV;
+            fixed4 color : COLOR;
+        };
+        void vert(inout appdata_full vertex, out Input data) {
+            UNITY_INITIALIZE_OUTPUT(Input, data);
+            data.meshUV = vertex.texcoord.xy;
+            data.color = vertex.color;
         }
+        float2 LayerUV(Input data, float world, float tile) {
+            return lerp(data.meshUV, data.worldPos.xz, saturate(world)) * tile;
+        }
+        void surf(Input data, inout SurfaceOutputStandardSpecular output) {
+            float4 weights = float4(saturate(1.0-data.color.r-data.color.g-data.color.b),data.color.rgb);
+            weights /= max(dot(weights,float4(1,1,1,1)),0.001);
+            output.Albedo = tex2D(_Diffuse1,LayerUV(data,_WorldPoseDif,_UVTileDif)).rgb*weights.x
+                + tex2D(_DiffuseR,LayerUV(data,_WorldPoseR,_UVTileR)).rgb*weights.y
+                + tex2D(_DiffuseG,LayerUV(data,_WorldPoseG,_UVTileG)).rgb*weights.z
+                + tex2D(_DiffuseB,LayerUV(data,_WorldPoseB,_UVTileB)).rgb*weights.w;
+            float3 normal = UnpackNormal(tex2D(_Normal1,LayerUV(data,_WorldPoseDifN,_UVTileDifN)))*weights.x
+                + float3(0,0,1)*weights.y
+                + UnpackNormal(tex2D(_NormalG,LayerUV(data,_WorldPoseGN,_UVTileGN)))*weights.z
+                + UnpackNormal(tex2D(_NormalB,LayerUV(data,_WorldPoseBN,_UVTileBN)))*weights.w;
+            output.Normal = normalize(normal+float3(0,0,0.00001));
+            fixed4 specular = tex2D(_SpecularTexture,LayerUV(data,_UVWWorldPos_Spec,_UVTileSpec));
+            output.Specular = saturate(specular.rgb*_Specular);
+            output.Smoothness = saturate(_Glossines);
+            output.Occlusion = 1;
+            output.Alpha = 1;
+        }
+        ENDCG
     }
     Fallback Off
 }

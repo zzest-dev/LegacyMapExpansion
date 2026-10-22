@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace LegacyMapExpansion
 {
-    [BepInPlugin("com.bigcitylegacy.map1018", "Legacy Map Expansion", "0.2.1")]
+    [BepInPlugin("com.bigcitylegacy.map1018", "Legacy Map Expansion", "0.2.2")]
     public sealed class Plugin : BaseUnityPlugin
     {
         internal static Plugin Instance;

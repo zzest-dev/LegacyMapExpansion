@@ -1,4 +1,5 @@
 import argparse
+import json
 import zipfile
 from pathlib import Path
 
@@ -13,7 +14,8 @@ if __name__ == '__main__':
         raise ValueError('Build the plugin with embedded resources before packaging.')
     destination = ROOT / 'dist'
     destination.mkdir(exist_ok=True)
-    output = destination / 'LegacyMapExpansion-0.2.1.zip'
+    version = json.loads((ROOT / 'resources.lock.json').read_text(encoding='utf-8'))['version']
+    output = destination / f'LegacyMapExpansion-{version}.zip'
     with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as archive:
         archive.write(args.dll, 'LegacyMapExpansion/LegacyMapExpansion.dll')
         archive.write(ROOT / 'docs/INSTALL.md', 'README.md')

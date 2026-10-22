@@ -90,6 +90,10 @@ public static class MapPortBuild
         foreach (var item in manifest.grounds)
         {
             var prefab = bundle.LoadAsset<GameObject>(item.asset);
+            foreach (var material in prefab.GetComponent<Renderer>().sharedMaterials)
+                if (material && material.shader.name == "LegacyMapExpansion/TerrainLayers" &&
+                    (material.FindPass("DEFERRED") < 0 || material.FindPass("ShadowCaster") < 0 || material.renderQueue > 2500))
+                    throw new InvalidDataException("Terrain requires opaque deferred and depth passes: " + item.asset);
             var instance = UnityEngine.Object.Instantiate(prefab);
             var collider = instance.GetComponent<MeshCollider>();
             if (!collider || !collider.sharedMesh) throw new InvalidDataException("Missing ground collider " + item.asset);

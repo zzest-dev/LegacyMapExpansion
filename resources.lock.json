@@ -1,13 +1,13 @@
 {
-  "version": "0.2.1",
+  "version": "0.2.2",
   "files": {
     "Resources/compatibility.json": {
       "bytes": 662,
       "sha256": "0e182568a1acf98d9fcc260a901bf6b22632e5572efa5d89aec3302ffae9e64b"
     },
     "Resources/map1018.bundle": {
-      "bytes": 136552520,
-      "sha256": "56031f744e56644c728196df8e4bd4f7153d8e930fe0a622642d35bc8fe301a0"
+      "bytes": 136625360,
+      "sha256": "2a9eea9597fb670468195b9df2d45aae34dfe57b65ff5e1eeeaf6c04a54997ed"
     },
     "Resources/map94-patched.bytes": {
       "bytes": 30385728,

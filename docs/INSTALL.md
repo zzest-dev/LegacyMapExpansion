@@ -1,4 +1,4 @@
-# Установка Legacy Map Expansion 0.2.1
+# Установка Legacy Map Expansion 0.2.2
 
 1. Установите BepInEx 5 в MadOut2 PC 9.4 и один раз запустите игру.
 2. Закройте игру. Скопируйте папку `LegacyMapExpansion` из установочного архива в `BepInEx/plugins`.
