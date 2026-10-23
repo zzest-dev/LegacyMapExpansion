@@ -1,12 +1,16 @@
-# Legacy Map Expansion
+# Legacy Map Expansion 1.0.0
 
 Отдельный плагин BepInEx для MadOut2 PC 9.4. Переносит статическую геометрию карты 10.18 и выбранные локации 10.24: автошколу возле автодрома, офис и донерчик возле парка с колесом обозрения. Новая кафешка 10.24 не включена.
 
-Версия исходников: **1.0.0**. Плагин собирается в одну DLL со встроенными картой, AssetBundle и таблицами совместимости. Оригинальный `StreamingAssets/Map.bytes` на диске не заменяется.
+**1.0.0 — первый релиз плагина.** В состав входят перенесённые локации, обновлённый рельеф, материалы и восстановленное поведение объектов. Все необходимые ресурсы встроены в одну DLL.
+
+[Скачать релиз 1.0.0](https://github.com/zzest-dev/LegacyMapExpansion/releases/tag/v1.0.0) · [Состав выпуска](docs/RELEASE_1.0.0.md)
 
 ## Установка
 
-Нужны PC 9.4 и установленный BepInEx 5. Поместите `LegacyMapExpansion.dll` в `BepInEx/plugins/LegacyMapExpansion/` и перезапустите игру. Удалите предыдущую копию этого же плагина из других папок `plugins`.
+Нужны MadOut2 PC 9.4 и установленный BepInEx 5. Скачайте `LegacyMapExpansion-1.0.0.zip` со страницы релиза и при закрытой игре распакуйте папку `LegacyMapExpansion` в `BepInEx/plugins`. После установки запустите игру.
+
+Для обновления замените прежнюю DLL. В папке `plugins` должна остаться одна копия плагина. Оригинальный `StreamingAssets/Map.bytes` на диске сохраняется.
 
 Подробности, отключение и диагностика: [INSTALL.md](docs/INSTALL.md).
 
@@ -17,6 +21,7 @@
 ```powershell
 git clone https://github.com/zzest-dev/LegacyMapExpansion.git
 cd LegacyMapExpansion
+git checkout v1.0.0
 git lfs pull
 python tools/verify_resources.py
 .\tools\build.ps1 -GameDir 'D:\Games\MadOut2_BigCityOnline'
