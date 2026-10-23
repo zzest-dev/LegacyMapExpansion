@@ -26,7 +26,6 @@ UnityProject/Assets/MapShaders.meta
 Resources/*.manifest
 Resources/Resources
 *-verification.json
-!docs/verification-0.2.1.json
 bundle-report.json
 ground-comparison.json
 rejected-prefabs.txt
