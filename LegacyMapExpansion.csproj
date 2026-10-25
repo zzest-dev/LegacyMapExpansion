@@ -5,17 +5,24 @@
     <AssemblyName>LegacyMapExpansion</AssemblyName>
     <Version>1.0.0</Version>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultItems>false</EnableDefaultItems>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <NoWarn>$(NoWarn);0649</NoWarn>
-    <ManagedDir>$(GameDir)\game_Data\Managed</ManagedDir>
-    <BepInExDir>$(GameDir)\BepInEx\core</BepInExDir>
+    <NoWarn>$(NoWarn);0649;0618</NoWarn>
+    <MapPlatform Condition="'$(MapPlatform)' == ''">Windows</MapPlatform>
+    <MapBundlePath Condition="'$(MapPlatform)' == 'Windows'">Resources\map1018.bundle</MapBundlePath>
+    <MapBundlePath Condition="'$(MapPlatform)' == 'Linux'">Resources\Linux\map1018.bundle</MapBundlePath>
+    <OutputPath Condition="'$(MapPlatform)' == 'Linux'">bin\$(Configuration)\Linux\</OutputPath>
+    <IntermediateOutputPath Condition="'$(MapPlatform)' == 'Linux'">obj\$(Configuration)\Linux\</IntermediateOutputPath>
+    <ManagedDir Condition="'$(ManagedDir)' == ''">$(GameDir)\game_Data\Managed</ManagedDir>
+    <BepInExDir Condition="'$(BepInExDir)' == ''">$(GameDir)\BepInEx\core</BepInExDir>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="src\**\*.cs" />
-    <EmbeddedResource Include="Resources\map1018.bundle" LogicalName="LegacyMapExpansion.bundle" />
+    <EmbeddedResource Include="$(MapBundlePath)" LogicalName="LegacyMapExpansion.bundle" />
     <EmbeddedResource Include="Resources\map94-patched.bytes" LogicalName="LegacyMapExpansion.map" />
     <EmbeddedResource Include="Resources\compatibility.json" LogicalName="LegacyMapExpansion.compatibility" />
     <EmbeddedResource Include="Resources\native-ground-materials.json" LogicalName="LegacyMapExpansion.groundmaterials" />
+    <EmbeddedResource Include="resources.lock.json" LogicalName="LegacyMapExpansion.networkmanifest" />
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" PrivateAssets="all" />
     <Reference Include="BepInEx"><HintPath>$(BepInExDir)\BepInEx.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="0Harmony"><HintPath>$(BepInExDir)\0Harmony.dll</HintPath><Private>false</Private></Reference>
@@ -24,12 +31,17 @@
     <Reference Include="Assembly-CSharp-firstpass" Publicize="true"><HintPath>$(ManagedDir)\Assembly-CSharp-firstpass.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine"><HintPath>$(ManagedDir)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.IMGUIModule"><HintPath>$(ManagedDir)\UnityEngine.IMGUIModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UNETModule"><HintPath>$(ManagedDir)\UnityEngine.UNETModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="com.unity.multiplayer-hlapi.Runtime"><HintPath>$(ManagedDir)\com.unity.multiplayer-hlapi.Runtime.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.AssetBundleModule"><HintPath>$(ManagedDir)\UnityEngine.AssetBundleModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(ManagedDir)\UnityEngine.PhysicsModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.ParticleSystemModule"><HintPath>$(ManagedDir)\UnityEngine.ParticleSystemModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.JSONSerializeModule"><HintPath>$(ManagedDir)\UnityEngine.JSONSerializeModule.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
   <Target Name="ValidateGameDirectory" BeforeTargets="ResolveReferences">
+    <Error Condition="'$(MapPlatform)' != 'Windows' and '$(MapPlatform)' != 'Linux'" Text="MapPlatform must be Windows or Linux." />
+    <Error Condition="!Exists('$(MapBundlePath)')" Text="Map bundle is missing for $(MapPlatform). Build the matching Unity resources first." />
     <Error Condition="'$(GameDir)' == ''" Text="Set GameDir to the MadOut2 PC 9.4 installation directory." />
     <Error Condition="!Exists('$(ManagedDir)\Assembly-CSharp.dll')" Text="GameDir does not contain game_Data/Managed/Assembly-CSharp.dll." />
     <Error Condition="!Exists('$(BepInExDir)\BepInEx.dll')" Text="Install BepInEx 5 into GameDir before building." />

@@ -26,7 +26,7 @@ namespace LegacyMapExpansion
         internal MapAssets(byte[] bytes)
         {
             bundle = AssetBundle.LoadFromMemory(bytes);
-            if (!bundle) throw new InvalidDataException("Cannot load Windows map bundle");
+            if (!bundle) throw new InvalidDataException("Cannot load map bundle on " + Application.platform + ". Install the matching platform build.");
             var data = bundle.LoadAsset<TextAsset>("Assets/map-manifest.json");
             if (!data) throw new InvalidDataException("Map bundle manifest is missing");
             var manifest = JsonConvert.DeserializeObject<Manifest>(data.text);

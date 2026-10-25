@@ -8,6 +8,9 @@ using UnityEngine.Rendering;
 
 public static class MapPortBuild
 {
+    private static bool LinuxBuild => Environment.GetCommandLineArgs().Contains("-mapLinux");
+    private static string BundleDirectory => LinuxBuild ? "../Resources/Linux" : "../Resources";
+    private static BuildTarget BundleTarget => LinuxBuild ? BuildTarget.StandaloneLinux64 : BuildTarget.StandaloneWindows64;
     [Serializable] public class GroundStats { public string asset; public int vertices, oldVertices; public float maximumVertexDelta; public bool indicesEqual; }
     [Serializable] public class GroundStatsReport { public GroundStats[] tiles; }
     [Serializable] public class Prefab { public string guid, asset; }
@@ -43,9 +46,10 @@ public static class MapPortBuild
         }
         assets.Add("Assets/map-manifest.json");
         AssetDatabase.SaveAssets();
-        var result = BuildPipeline.BuildAssetBundles("../Resources", new[] {
+        Directory.CreateDirectory(BundleDirectory);
+        var result = BuildPipeline.BuildAssetBundles(BundleDirectory, new[] {
             new AssetBundleBuild { assetBundleName = "map1018.bundle", assetNames = assets.ToArray() }
-        }, BuildAssetBundleOptions.ChunkBasedCompression | BuildAssetBundleOptions.StrictMode | BuildAssetBundleOptions.ForceRebuildAssetBundle, BuildTarget.StandaloneWindows64);
+        }, BuildAssetBundleOptions.ChunkBasedCompression | BuildAssetBundleOptions.StrictMode | BuildAssetBundleOptions.ForceRebuildAssetBundle, BundleTarget);
         if (!result) throw new InvalidDataException("Map repack failed");
         ValidateBundle();
         Debug.Log("REGIONAL_MAP_REPACK_OK");
@@ -53,7 +57,7 @@ public static class MapPortBuild
 
     public static void ValidateBundle()
     {
-        var bundle = AssetBundle.LoadFromFile(Path.GetFullPath("../Resources/map1018.bundle"));
+        var bundle = AssetBundle.LoadFromFile(Path.GetFullPath(Path.Combine(BundleDirectory, "map1018.bundle")));
         if (!bundle) throw new InvalidDataException("Cannot load the built map bundle");
         var manifest = JsonUtility.FromJson<Output>(bundle.LoadAsset<TextAsset>("Assets/map-manifest.json").text);
         int renderers = 0, colliders = 0, terrainHits = 0, recoveredMeshes = 0;
@@ -223,9 +227,10 @@ public static class MapPortBuild
         AssetDatabase.ImportAsset("Assets/map-manifest.json");
         assets.Add("Assets/map-manifest.json");
         Directory.CreateDirectory("../Resources");
-        var result = BuildPipeline.BuildAssetBundles("../Resources", new[] {
+        Directory.CreateDirectory(BundleDirectory);
+        var result = BuildPipeline.BuildAssetBundles(BundleDirectory, new[] {
             new AssetBundleBuild { assetBundleName = "map1018.bundle", assetNames = assets.ToArray() }
-        }, BuildAssetBundleOptions.ChunkBasedCompression | BuildAssetBundleOptions.StrictMode | BuildAssetBundleOptions.ForceRebuildAssetBundle, BuildTarget.StandaloneWindows64);
+        }, BuildAssetBundleOptions.ChunkBasedCompression | BuildAssetBundleOptions.StrictMode | BuildAssetBundleOptions.ForceRebuildAssetBundle, BundleTarget);
         if (!result) throw new Exception("Map AssetBundle build failed");
         File.WriteAllText("../bundle-report.json", JsonUtility.ToJson(new Output { prefabs = valid.ToArray(), grounds = changed.ToArray(), materials = materials }, true));
         File.WriteAllLines("../rejected-prefabs.txt", rejected.ToArray());

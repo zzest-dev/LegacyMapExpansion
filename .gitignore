@@ -7,6 +7,8 @@ __pycache__/
 *.pyc
 *.user
 *.log
+tests/UnityFixture/
+tests/diagnostics/
 UnityProject/Library/
 UnityProject/Temp/
 UnityProject/Logs/
@@ -25,6 +27,8 @@ UnityProject/Assets/Editor.meta
 UnityProject/Assets/MapShaders.meta
 Resources/*.manifest
 Resources/Resources
+Resources/Linux/*.manifest
+Resources/Linux/Linux
 *-verification.json
 bundle-report.json
 ground-comparison.json

@@ -20,6 +20,10 @@
     "PortingInputs/UnityAssets.zip": {
       "bytes": 268451878,
       "sha256": "30fb734ae7d81de3d50e9971f956eeb4420004d467f7176e852d243582b12d93"
+    },
+    "Resources/Linux/map1018.bundle": {
+      "bytes": 139342562,
+      "sha256": "9dd088f8fc63086fdf9b1b5b8723eafeb4feed660ec0e5fa8d103bc7e1dffd68"
     }
   }
 }

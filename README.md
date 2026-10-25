@@ -8,11 +8,13 @@
 
 ## Установка
 
-Нужны MadOut2 PC 9.4 и установленный BepInEx 5. Скачайте `LegacyMapExpansion-1.0.0.zip` со страницы релиза и при закрытой игре распакуйте папку `LegacyMapExpansion` в `BepInEx/plugins`. После установки запустите игру.
+Нужны MadOut2 PC 9.4 и установленный BepInEx 5. Скачайте `LegacyMapExpansion-1.0.0.zip` со страницы релиза и при закрытой игре распакуйте архив в корень игры. Он содержит `BepInEx/plugins/LegacyMapExpansion/LegacyMapExpansion.dll` и подходит для установщика. После установки запустите игру.
 
 Для обновления замените прежнюю DLL. В папке `plugins` должна остаться одна копия плагина.
 
 Подробности, отключение и диагностика: [INSTALL.md](docs/INSTALL.md).
+
+Для Linux-клиента или Linux-сервера используйте отдельный архив `LegacyMapExpansion-1.0.0-Linux.zip` с ресурсами под Linux x86_64. Инструкция: [INSTALL_LINUX.md](docs/INSTALL_LINUX.md). Windows- и Linux-сборки используют одинаковую карту 1.0.0, но разные встроенные AssetBundle.
 
 ## Сборка исходников
 
@@ -21,7 +23,6 @@
 ```powershell
 git clone https://github.com/zzest-dev/LegacyMapExpansion.git
 cd LegacyMapExpansion
-git checkout v1.0.0
 git lfs pull
 python tools/verify_resources.py
 .\tools\build.ps1 -GameDir 'D:\Games\MadOut2_BigCityOnline'
@@ -59,8 +60,11 @@ python tools/prepare_unity.py
 - [Сборка и редактирование ресурсов](docs/BUILD.md)
 - [Используемая структура MapPro](docs/MAP_FORMAT.md)
 - [История изменений](CHANGELOG.md)
+- [Сетевая проверка карты и допуск игроков](docs/NETWORK.md)
 
 Совместимость проверяется по SHA-256 исходной карты из `Resources/compatibility.json`. Если карта другая, плагин отключает свои патчи и оставляет штатную загрузку. Игровые библиотеки, декомпилированные проекты, кеш Unity и временные исследовательские файлы в репозиторий не включены.
+
+Сервер с включённым плагином требует подтверждения карты от каждого клиента до Ready/AddPlayer. Прямой IP, мастер-сервер и альтернативные способы поиска сервера проходят через одну проверку. Windows и Linux используют общий идентификатор содержимого карты. Для сетевой игры нужны обновлённые архивы 1.0.0 и на сервере, и на клиентах; ранняя сборка 1.0.0 без этого протокола не подходит. Проверка карты не является защитой от намеренно модифицированного клиента.
 
 ## Авторство
 

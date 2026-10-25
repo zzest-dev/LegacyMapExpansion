@@ -9,5 +9,6 @@
 *.asset text eol=lf
 Resources/*.json -text
 Resources/*.bundle filter=lfs diff=lfs merge=lfs -text
+Resources/Linux/*.bundle filter=lfs diff=lfs merge=lfs -text
 Resources/*.bytes filter=lfs diff=lfs merge=lfs -text
 PortingInputs/*.zip filter=lfs diff=lfs merge=lfs -text

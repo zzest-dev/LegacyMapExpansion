@@ -35,6 +35,26 @@ python tools/prepare_unity.py
 
 Версия редактора: **2019.1.8f1**, платформа сборки бандла: **StandaloneWindows64**. Первая загрузка требует импорта ассетов. Для сборки шейдеров не используйте `-nographics`.
 
+### Сборка для Linux
+
+Установите модуль **Linux Build Support** для Unity 2019.1.8f1. Для Linux x86_64 используйте `StandaloneLinux64`. Запустите редактор с `-buildTarget Linux64 -mapLinux` и методом `MapPortBuild.Repack`. При сборке на Windows добавьте `-force-glcore`: встроенная проверка шейдеров Linux должна выполняться через OpenGL, а не Direct3D. Бандл будет создан отдельно в `Resources/Linux/map1018.bundle`; Windows-бандл не перезаписывается.
+
+```powershell
+& 'D:\Unity\2019.1.8f1\Editor\Unity.exe' -batchmode -quit -force-glcore -buildTarget Linux64 -mapLinux -projectPath "$PWD\UnityProject" -executeMethod MapPortBuild.Repack -logFile "$PWD\unity-linux-build.log"
+```
+
+После проверки бандла добавьте или обновите его размер и SHA-256 в `resources.lock.json`, затем выполните:
+
+```powershell
+python tools/verify_resources.py --runtime-only --platform Linux
+.\tools\build.ps1 -GameDir 'D:\Games\MadOut2_BigCityOnline' -Platform Linux
+python tools/package.py --platform Linux
+```
+
+DLL находится в `bin/Release/Linux/LegacyMapExpansion.dll`, архив в `dist/LegacyMapExpansion-1.0.0-Linux.zip`. Версия карты остаётся 1.0.0. Платформу задаёт встроенный AssetBundle; переименование Windows-DLL не создаёт Linux-сборку.
+
+Управляемый код Mono не привязан к Windows, однако игровые DLL должны соответствовать серверу. Для проверки по библиотекам конкретного сервера передайте его каталог в `-GameDir`, а при другом имени каталога данных также `-ManagedDir 'D:\Server\server_Data\Managed'`. Запуск и совместимость с конкретной серверной сборкой проверяются отдельно. Инструкция установки: [INSTALL_LINUX.md](INSTALL_LINUX.md).
+
 ## Методы сборки Unity
 
 Запускайте методы в закрытом для других экземпляров Unity проекте. Пример PowerShell:
