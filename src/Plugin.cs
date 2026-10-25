@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading;
 using BepInEx;
-using BepInEx.Configuration;
 using HarmonyLib;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -27,11 +26,6 @@ namespace LegacyMapExpansion
             if (!Config.Bind("General", "Enabled", true, "Enable the map expansion on the next game start.").Value) return;
             try
             {
-                float timeout = Config.Bind("Network", "HandshakeTimeoutSeconds", 8f,
-                    new ConfigDescription("Time allowed to confirm the map before the server disconnects a client.", new AcceptableValueRange<float>(3f, 30f))).Value;
-                float heartbeat = Config.Bind("Network", "HeartbeatIntervalSeconds", 30f,
-                    new ConfigDescription("Interval between map-plugin presence checks on an established connection.", new AcceptableValueRange<float>(15f, 120f))).Value;
-                MapNetworkAdmission.Install(timeout, heartbeat);
                 var compatibility = JsonConvert.DeserializeObject<Compatibility>(ReadText("compatibility"));
                 if (compatibility == null || string.IsNullOrEmpty(compatibility.baseMapSha256))
                     throw new InvalidDataException("Map compatibility manifest is incomplete");
@@ -45,23 +39,16 @@ namespace LegacyMapExpansion
                 MapBytes = ReadResource("map");
                 if (MapBytes.Length < 32) throw new InvalidDataException("Map resource is empty");
                 Assets = new MapAssets(ReadResource("bundle"));
-                MapNetworkAdmission.Identity = MapNetworkProtocol.Identity(MapBytes, ReadResource("compatibility"), ReadResource("groundmaterials"), ReadResource("networkmanifest"));
                 harmony = new Harmony("com.bigcitylegacy.map1018");
                 harmony.PatchAll(typeof(Plugin).Assembly);
                 Ready = true;
                 Logger.LogInfo("Map expansion ready: " + Assets.PrefabCount + " prefab types, " + Assets.GroundCount + " terrain tiles. Native 9.4 actors and decals retained.");
-                Logger.LogInfo("Map admission enabled: protocol " + MapNetworkProtocol.Version + ", identity " + MapNetworkAdmission.Identity + ". Clients must confirm this map before Ready/AddPlayer.");
             }
             catch (Exception error)
             {
                 Ready = false;
                 if (harmony != null) harmony.UnpatchSelf();
                 Logger.LogError("Map expansion disabled; original map retained. " + error);
-                if (Array.Exists(Environment.GetCommandLineArgs(), arg => arg.Equals("-bend_GameServer", StringComparison.OrdinalIgnoreCase)))
-                {
-                    Logger.LogError("Server launch aborted because the required map or map admission could not initialize.");
-                    Application.Quit(1);
-                }
             }
         }
 
@@ -76,18 +63,6 @@ namespace LegacyMapExpansion
 
         private static string ReadText(string name) => System.Text.Encoding.UTF8.GetString(ReadResource(name));
         internal static void Warn(string text) { if (Instance) Instance.Logger.LogWarning(text); else Debug.LogWarning(text); }
-        internal static void LogInfo(string text) { if (Instance) Instance.Logger.LogInfo(text); }
-        private void Update() { if (MapNetworkAdmission.Installed) MapNetworkAdmission.Update(); }
-        private void OnGUI()
-        {
-            if (!MapNetworkAdmission.ShowFailure) return;
-            float width = Mathf.Min(560, Screen.width - 24);
-            GUILayout.BeginArea(new Rect((Screen.width - width) / 2, Mathf.Max(12, (Screen.height - 220) / 2), width, 220), GUI.skin.box);
-            GUILayout.Label("Legacy Map Expansion");
-            GUILayout.Label(MapNetworkAdmission.FailureText);
-            if (GUILayout.Button("OK")) MapNetworkAdmission.ShowFailure = false;
-            GUILayout.EndArea();
-        }
         internal static void ReportMapOverride()
         {
             if (Instance && Interlocked.Exchange(ref mapOverrideAnnounced, 1) == 0)

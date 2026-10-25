@@ -23,5 +23,4 @@ if __name__ == '__main__':
     with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as archive:
         archive.write(args.dll, 'BepInEx/plugins/LegacyMapExpansion/LegacyMapExpansion.dll')
         archive.write(ROOT / ('docs/INSTALL_LINUX.md' if args.platform == 'Linux' else 'docs/INSTALL.md'), 'BepInEx/plugins/LegacyMapExpansion/README.md')
-        archive.write(ROOT / 'docs/NETWORK.md', 'BepInEx/plugins/LegacyMapExpansion/NETWORK.md')
     print(output)
