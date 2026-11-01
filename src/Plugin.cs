@@ -4,26 +4,45 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading;
 using BepInEx;
+using BepInEx.Configuration;
+using BigCityLegacy.Api;
 using HarmonyLib;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace LegacyMapExpansion
 {
-    [BepInPlugin("com.bigcitylegacy.map1018", "Legacy Map Expansion", "1.0.0")]
-    public sealed class Plugin : BaseUnityPlugin
+    [BepInPlugin("com.bigcitylegacy.map1018", "Legacy Map Expansion", "1.0.1")]
+    [BepInDependency("com.bigcitylegacy.baseplugin", "1.4.2")]
+    [LegacyPluginActivation(RequiresRestart = true)]
+    public sealed class Plugin : BaseUnityPlugin, ILegacyPluginActivation
     {
         internal static Plugin Instance;
         internal static MapAssets Assets;
         internal static byte[] MapBytes;
         internal static volatile bool Ready;
+        internal static ConfigEntry<bool> Enabled;
         private static int mapOverrideAnnounced;
         private Harmony harmony;
+
+        // Report the map actually used by this process, not the next-start setting.
+        public bool IsEnabled => Ready;
+        public void Enable() { SetEnabled(true); }
+        public void Disable() { SetEnabled(false); }
+
+        internal static void SetEnabled(bool value)
+        {
+            bool previous = Enabled.Value;
+            try { Enabled.Value = value; Enabled.ConfigFile.Save(); }
+            catch { Enabled.Value = previous; throw; }
+        }
 
         private void Awake()
         {
             Instance = this;
-            if (!Config.Bind("General", "Enabled", true, "Enable the map expansion on the next game start.").Value) return;
+            Enabled = Config.Bind("General", "Enabled", true, "Enable the map expansion on the next game start.");
+            MapSettings.Install();
+            if (!Enabled.Value) return;
             try
             {
                 var compatibility = JsonConvert.DeserializeObject<Compatibility>(ReadText("compatibility"));

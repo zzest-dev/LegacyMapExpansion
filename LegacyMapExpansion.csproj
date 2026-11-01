@@ -3,14 +3,17 @@
     <TargetFramework>net472</TargetFramework>
     <LangVersion>latest</LangVersion>
     <AssemblyName>LegacyMapExpansion</AssemblyName>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultItems>false</EnableDefaultItems>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>$(NoWarn);0649</NoWarn>
+    <ResourcesDir Condition="'$(ResourcesDir)' == ''">$(MSBuildProjectDirectory)\Resources</ResourcesDir>
+    <BigCityLegacyDll Condition="'$(BigCityLegacyDll)' == '' and Exists('$(GameDir)\BepInEx\plugins\BigCityLegacy\BigCityLegacy.dll')">$(GameDir)\BepInEx\plugins\BigCityLegacy\BigCityLegacy.dll</BigCityLegacyDll>
+    <BigCityLegacyDll Condition="'$(BigCityLegacyDll)' == ''">$(GameDir)\BepInEx\plugins\BigCityLegacy.dll</BigCityLegacyDll>
     <MapPlatform Condition="'$(MapPlatform)' == ''">Windows</MapPlatform>
-    <MapBundlePath Condition="'$(MapPlatform)' == 'Windows'">Resources\map1018.bundle</MapBundlePath>
-    <MapBundlePath Condition="'$(MapPlatform)' == 'Linux'">Resources\Linux\map1018.bundle</MapBundlePath>
+    <MapBundlePath Condition="'$(MapPlatform)' == 'Windows'">$(ResourcesDir)\map1018.bundle</MapBundlePath>
+    <MapBundlePath Condition="'$(MapPlatform)' == 'Linux'">$(ResourcesDir)\Linux\map1018.bundle</MapBundlePath>
     <OutputPath Condition="'$(MapPlatform)' == 'Linux'">bin\$(Configuration)\Linux\</OutputPath>
     <IntermediateOutputPath Condition="'$(MapPlatform)' == 'Linux'">obj\$(Configuration)\Linux\</IntermediateOutputPath>
     <ManagedDir Condition="'$(ManagedDir)' == ''">$(GameDir)\game_Data\Managed</ManagedDir>
@@ -19,10 +22,11 @@
   <ItemGroup>
     <Compile Include="src\**\*.cs" />
     <EmbeddedResource Include="$(MapBundlePath)" LogicalName="LegacyMapExpansion.bundle" />
-    <EmbeddedResource Include="Resources\map94-patched.bytes" LogicalName="LegacyMapExpansion.map" />
-    <EmbeddedResource Include="Resources\compatibility.json" LogicalName="LegacyMapExpansion.compatibility" />
-    <EmbeddedResource Include="Resources\native-ground-materials.json" LogicalName="LegacyMapExpansion.groundmaterials" />
+    <EmbeddedResource Include="$(ResourcesDir)\map94-patched.bytes" LogicalName="LegacyMapExpansion.map" />
+    <EmbeddedResource Include="$(ResourcesDir)\compatibility.json" LogicalName="LegacyMapExpansion.compatibility" />
+    <EmbeddedResource Include="$(ResourcesDir)\native-ground-materials.json" LogicalName="LegacyMapExpansion.groundmaterials" />
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" PrivateAssets="all" />
+    <Reference Include="BigCityLegacy"><HintPath>$(BigCityLegacyDll)</HintPath><Private>false</Private></Reference>
     <Reference Include="BepInEx"><HintPath>$(BepInExDir)\BepInEx.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="0Harmony"><HintPath>$(BepInExDir)\0Harmony.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Newtonsoft.Json"><HintPath>$(ManagedDir)\Newtonsoft.Json.dll</HintPath><Private>false</Private></Reference>
@@ -30,6 +34,9 @@
     <Reference Include="Assembly-CSharp-firstpass" Publicize="true"><HintPath>$(ManagedDir)\Assembly-CSharp-firstpass.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine"><HintPath>$(ManagedDir)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>$(ManagedDir)\UnityEngine.UI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UIModule"><HintPath>$(ManagedDir)\UnityEngine.UIModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.TextRenderingModule"><HintPath>$(ManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.AssetBundleModule"><HintPath>$(ManagedDir)\UnityEngine.AssetBundleModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(ManagedDir)\UnityEngine.PhysicsModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.ParticleSystemModule"><HintPath>$(ManagedDir)\UnityEngine.ParticleSystemModule.dll</HintPath><Private>false</Private></Reference>
@@ -38,6 +45,8 @@
   <Target Name="ValidateGameDirectory" BeforeTargets="ResolveReferences">
     <Error Condition="'$(MapPlatform)' != 'Windows' and '$(MapPlatform)' != 'Linux'" Text="MapPlatform must be Windows or Linux." />
     <Error Condition="!Exists('$(MapBundlePath)')" Text="Map bundle is missing for $(MapPlatform). Build the matching Unity resources first." />
+    <Warning Condition="!Exists('$(BigCityLegacyDll)')" Code="LME001" Text="BigCityLegacy.dll not found. Install BCL 1.4.2+ or pass -p:BigCityLegacyDll=absolute/path/BigCityLegacy.dll." />
+    <Error Condition="!Exists('$(BigCityLegacyDll)')" Text="BCL 1.4.2+ is required for activation and restart API." />
     <Error Condition="'$(GameDir)' == ''" Text="Set GameDir to the MadOut2 PC 9.4 installation directory." />
     <Error Condition="!Exists('$(ManagedDir)\Assembly-CSharp.dll')" Text="GameDir does not contain game_Data/Managed/Assembly-CSharp.dll." />
     <Error Condition="!Exists('$(BepInExDir)\BepInEx.dll')" Text="Install BepInEx 5 into GameDir before building." />
