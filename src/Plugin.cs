@@ -53,8 +53,8 @@ namespace LegacyMapExpansion
                 using (var file = File.OpenRead(mapPath))
                 using (var sha = SHA256.Create())
                     hash = BitConverter.ToString(sha.ComputeHash(file)).Replace("-", "").ToLowerInvariant();
-                if (hash != compatibility.baseMapSha256)
-                    throw new InvalidDataException("Unsupported base map. Expected MadOut2 PC 9.4 map " + compatibility.baseMapSha256 + ", got " + hash);
+                if (hash != compatibility.baseMapSha256 && hash != compatibility.baseMapSha256Linux)
+                    throw new InvalidDataException("Unsupported base map. Expected MadOut2 PC 9.4 map " + compatibility.baseMapSha256 + " (Windows) or " + compatibility.baseMapSha256Linux + " (Linux), got " + hash);
                 MapBytes = ReadResource("map");
                 if (MapBytes.Length < 32) throw new InvalidDataException("Map resource is empty");
                 Assets = new MapAssets(ReadResource("bundle"));
@@ -87,6 +87,6 @@ namespace LegacyMapExpansion
             if (Instance && Interlocked.Exchange(ref mapOverrideAnnounced, 1) == 0)
                 Instance.Logger.LogInfo("Map data override active: loading the expansion through native MapPro.");
         }
-        [Serializable] private sealed class Compatibility { public string baseMapSha256; }
+        [Serializable] private sealed class Compatibility { public string baseMapSha256, baseMapSha256Linux; }
     }
 }

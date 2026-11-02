@@ -2,8 +2,8 @@
   "version": "1.0.0",
   "files": {
     "Resources/compatibility.json": {
-      "bytes": 662,
-      "sha256": "0e182568a1acf98d9fcc260a901bf6b22632e5572efa5d89aec3302ffae9e64b"
+      "bytes": 725,
+      "sha256": "f94921fbf9fd30970e5739ef0e0d38909899b6efcf8e93dd21a7ef91a64d4b9b"
     },
     "Resources/map1018.bundle": {
       "bytes": 136627267,
