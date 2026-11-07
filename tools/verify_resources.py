@@ -21,7 +21,7 @@ def verify(include_inputs=True, platform='Windows'):
     for name, expected in lock['files'].items():
         if name.startswith('Resources/Linux/') and platform != 'Linux':
             continue
-        if name == 'Resources/map1018.bundle' and platform == 'Linux':
+        if name in ('Resources/map1018.bundle', 'Resources/map1018-server.bundle') and platform == 'Linux':
             continue
         if not include_inputs and name.startswith('PortingInputs/'):
             continue

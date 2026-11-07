@@ -19,7 +19,6 @@ namespace LegacyMapExpansion
     {
         internal static Plugin Instance;
         internal static MapAssets Assets;
-        internal static byte[] MapBytes;
         internal static volatile bool Ready;
         internal static ConfigEntry<bool> Enabled;
         private static int mapOverrideAnnounced;
@@ -55,28 +54,49 @@ namespace LegacyMapExpansion
                     hash = BitConverter.ToString(sha.ComputeHash(file)).Replace("-", "").ToLowerInvariant();
                 if (hash != compatibility.baseMapSha256 && hash != compatibility.baseMapSha256Linux)
                     throw new InvalidDataException("Unsupported base map. Expected MadOut2 PC 9.4 map " + compatibility.baseMapSha256 + " (Windows) or " + compatibility.baseMapSha256Linux + " (Linux), got " + hash);
-                MapBytes = ReadResource("map");
-                if (MapBytes.Length < 32) throw new InvalidDataException("Map resource is empty");
-                Assets = new MapAssets(ReadResource("bundle"));
+                using (var map = OpenResource("map"))
+                    if (map.Length < 32) throw new InvalidDataException("Map resource is empty");
+                bool headless = LegacyServerHeadlessBootstrap.IsOptimizationEnabled;
+                Assets = new MapAssets(OpenResource(headless ? "serverbundle" : "bundle"), headless);
                 harmony = new Harmony("com.bigcitylegacy.map1018");
                 harmony.PatchAll(typeof(Plugin).Assembly);
                 Ready = true;
-                Logger.LogInfo("Map expansion ready: " + Assets.PrefabCount + " prefab types, " + Assets.GroundCount + " terrain tiles. Native 9.4 actors and decals retained.");
+                Logger.LogInfo("Map expansion ready (" + (Assets.Headless ? "headless" : "client") + "): " + Assets.PrefabCount + " prefab types, " + Assets.GroundCount + " terrain tiles. Native 9.4 actors and decals retained.");
             }
             catch (Exception error)
             {
                 Ready = false;
                 if (harmony != null) harmony.UnpatchSelf();
+                Assets?.Dispose(); Assets = null;
                 Logger.LogError("Map expansion disabled; original map retained. " + error);
             }
         }
 
+        private void OnDestroy()
+        {
+            if (Instance != this) return;
+            Ready = false;
+            harmony?.UnpatchSelf();
+            Assets?.Dispose(); Assets = null;
+            Instance = null;
+        }
+
+        internal static Stream OpenResource(string name)
+        {
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("LegacyMapExpansion." + name);
+            if (stream == null) throw new FileNotFoundException("Missing map resource: " + name);
+            return stream;
+        }
+
         internal static byte[] ReadResource(string name)
         {
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("LegacyMapExpansion." + name))
+            using (var stream = OpenResource(name))
+            using (var reader = new BinaryReader(stream))
             {
-                if (stream == null) throw new FileNotFoundException("Missing map resource: " + name);
-                using (var output = new MemoryStream()) { stream.CopyTo(output); return output.ToArray(); }
+                int length = checked((int)stream.Length);
+                byte[] bytes = reader.ReadBytes(length);
+                if (bytes.Length != length) throw new EndOfStreamException("Incomplete map resource: " + name);
+                return bytes;
             }
         }
 

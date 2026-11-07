@@ -11,7 +11,7 @@ namespace LegacyMapExpansion
         {
             if (!Plugin.Ready || !IsMap(__0)) return true;
             Plugin.ReportMapOverride();
-            __result = new MemoryStream(Plugin.MapBytes, false);
+            __result = Plugin.OpenResource("map");
             return false;
         }
 
@@ -25,7 +25,7 @@ namespace LegacyMapExpansion
         {
             if (!Plugin.Ready || !MapStreamPatch.IsMap(__0)) return true;
             Plugin.ReportMapOverride();
-            __result = Plugin.MapBytes;
+            __result = Plugin.ReadResource("map");
             return false;
         }
     }
@@ -38,7 +38,10 @@ namespace LegacyMapExpansion
             if (!Plugin.Ready || !MapProObjInfo.canCreate || __instance.isLoaded) return true;
             GameObject prefab;
             if (!Plugin.Assets.TryPrefab(__instance, out prefab)) return true;
-            __instance.SetLoadedObject(prefab);
+            // The headless bundle already has no visuals. Let MapPro use this
+            // prepared template directly instead of creating another BCL clone.
+            if (Plugin.Assets.Headless) MapTemplatePatch.SetPrepared(__instance, prefab, true);
+            else __instance.SetLoadedObject(prefab);
             __result = true;
             return false;
         }
@@ -50,14 +53,19 @@ namespace LegacyMapExpansion
         private static bool Prefix(MapProObjInfo __instance, Object __0)
         {
             var prefab = __0 as GameObject;
-            if (!Plugin.Ready || NetManager.isServer || !Plugin.Assets.IsTemplate(prefab)) return true;
-            __instance.isLoaded = true;
-            __instance.obj = __instance.copyFrom = prefab;
-            __instance.decalData = null;
-            __instance.isDecal = false;
-            __instance.isMovable = prefab.GetComponentInChildren<Rigidbody>(true);
-            __instance.quality = null;
+            if (!Plugin.Ready || NetManager.isServer || !Plugin.Assets.IsTemplate(__instance, prefab)) return true;
+            SetPrepared(__instance, prefab, false);
             return false;
+        }
+
+        internal static void SetPrepared(MapProObjInfo info, GameObject prefab, bool headless)
+        {
+            info.isLoaded = true;
+            info.obj = info.copyFrom = prefab;
+            info.decalData = null;
+            info.isDecal = false;
+            info.isMovable = prefab.GetComponentInChildren<Rigidbody>(!headless);
+            info.quality = null;
         }
     }
 
@@ -77,7 +85,7 @@ namespace LegacyMapExpansion
     {
         private static bool Prefix(GroundItem __instance)
         {
-            if (!Plugin.Ready || !Plugin.Assets.IsGround(__instance.x, __instance.z)) return true;
+            if (!Plugin.Ready || !Plugin.Assets.OwnsGround(__instance)) return true;
             if (__instance.Instanciated) Object.Destroy(__instance.Instanciated);
             __instance.Instanciated = null;
             __instance.isLoaded = false;

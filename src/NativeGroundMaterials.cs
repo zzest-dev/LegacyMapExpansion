@@ -10,20 +10,17 @@ namespace LegacyMapExpansion
     {
         private readonly Dictionary<string, string> sources = new Dictionary<string, string>(StringComparer.Ordinal);
         private readonly Dictionary<string, Material> materials = new Dictionary<string, Material>(StringComparer.Ordinal);
-        private readonly HashSet<int> excluded;
-        private readonly HashSet<string> warned = new HashSet<string>(StringComparer.Ordinal);
+        private readonly Dictionary<Material, Material> fallbackMaterials = new Dictionary<Material, Material>();
+        private readonly bool visuals;
         private readonly Func<string, GameObject> load;
-        private readonly Dictionary<string, Material> fallback;
         private readonly Dictionary<string, Surface> surfaces = new Dictionary<string, Surface>(StringComparer.Ordinal);
         private readonly Dictionary<string, PhysicMaterial> physics = new Dictionary<string, PhysicMaterial>(StringComparer.Ordinal);
         private readonly HashSet<int> cached = new HashSet<int>();
-        private readonly Dictionary<string, GameObject> loaded = new Dictionary<string, GameObject>(StringComparer.Ordinal);
         private Shader terrainShader;
 
-        internal NativeGroundMaterials(byte[] json, HashSet<int> excluded, Dictionary<string, Material> fallback, Func<string, GameObject> load = null)
+        internal NativeGroundMaterials(byte[] json, bool visuals, Func<string, GameObject> load = null)
         {
-            this.excluded = excluded;
-            this.fallback = fallback;
+            this.visuals = visuals;
             this.load = load ?? (path => Resources.Load<GameObject>(path));
             var manifest = JsonConvert.DeserializeObject<Manifest>(System.Text.Encoding.UTF8.GetString(json));
             if (manifest == null || manifest.bindings == null) throw new InvalidDataException("Native ground material index is missing");
@@ -35,28 +32,31 @@ namespace LegacyMapExpansion
         internal bool Bind(GameObject original, GameObject replacement, string[] names)
         {
             Cache(original);
-            var renderer = replacement.GetComponent<Renderer>();
-            if (!renderer || names == null) return false;
-            var result = new Material[names.Length];
-            for (int i = 0; i < names.Length; i++)
+            Renderer renderer = null;
+            Material[] result = null;
+            if (visuals)
             {
-                var name = names[i];
-                Material material;
-                if (name == null) return false;
-                if (!materials.TryGetValue(name, out material) || !material)
+                renderer = replacement.GetComponent<Renderer>();
+                if (!renderer) return false;
+                var bundled = renderer.sharedMaterials;
+                names = new string[bundled.Length];
+                result = new Material[bundled.Length];
+                for (int i = 0; i < names.Length; i++)
                 {
-                    string resource;
-                    if (sources.TryGetValue(name, out resource)) Cache(Load(resource));
-                    if ((!materials.TryGetValue(name, out material) || !material) && fallback.TryGetValue(name, out material) && material)
-                        materials[name] = material = PrepareFallback(material);
+                    if (!bundled[i]) return false;
+                    string name = names[i] = bundled[i].name;
+                    Material material;
                     if (!materials.TryGetValue(name, out material) || !material)
                     {
-                        if (warned.Add(name)) Plugin.Warn("Native ground material unavailable: " + name + "; keeping the original terrain tile.");
-                        return false;
+                        string resource;
+                        if (sources.TryGetValue(name, out resource)) Cache(load(resource));
+                        if (!materials.TryGetValue(name, out material) || !material)
+                            material = PrepareFallback(bundled[i]);
                     }
+                    result[i] = material;
                 }
-                result[i] = material;
             }
+            if (names == null) return false;
             var collider = replacement.GetComponent<MeshCollider>();
             if (!collider || !collider.sharedMesh || collider.sharedMesh.subMeshCount != names.Length) return false;
             var runs = new List<PhMatByTriangleIndex.MatToPhMat>();
@@ -68,7 +68,7 @@ namespace LegacyMapExpansion
                 PhysicMaterial physical;
                 if (!physics.TryGetValue(surface.physics, out physical) || !physical)
                 {
-                    Cache(Load(surface.resource));
+                    Cache(load(surface.resource));
                     if (!physics.TryGetValue(surface.physics, out physical) || !physical) return false;
                 }
                 int count = checked((int)collider.sharedMesh.GetIndexCount(i)) / 3;
@@ -81,16 +81,17 @@ namespace LegacyMapExpansion
             var mapping = replacement.GetComponent<PhMatByTriangleIndex>() ?? replacement.AddComponent<PhMatByTriangleIndex>();
             mapping.matToPhMat = runs.ToArray();
             collider.sharedMaterial = null;
-            renderer.sharedMaterials = result;
+            if (visuals) renderer.sharedMaterials = result;
             return true;
         }
 
         private void Cache(GameObject prefab)
         {
             if (!prefab || !cached.Add(prefab.GetInstanceID())) return;
+            if (visuals)
             foreach (var renderer in prefab.GetComponentsInChildren<Renderer>(true))
                 foreach (var material in renderer.sharedMaterials)
-                    if (material && !excluded.Contains(material.GetInstanceID()))
+                    if (material)
                     {
                         materials[Name(material.name)] = material;
                         if (material.shader && material.shader.name == "Custom/VertexColorMix4" && material.shader.isSupported)
@@ -107,20 +108,12 @@ namespace LegacyMapExpansion
             if (!source.shader || source.shader.name != "LegacyMapExpansion/TerrainLayers") return source;
             var shader = terrainShader ? terrainShader : Shader.Find("Custom/VertexColorMix4");
             if (!shader || !shader.isSupported) return source;
-            var material = new Material(source) { name = source.name, shader = shader, renderQueue = -1 };
+            Material material;
+            if (fallbackMaterials.TryGetValue(source, out material) && material) return material;
+            material = new Material(source) { name = source.name, shader = shader, renderQueue = -1 };
             material.shaderKeywords = source.shaderKeywords;
+            fallbackMaterials[source] = material;
             return material;
-        }
-
-        private GameObject Load(string path)
-        {
-            GameObject value;
-            if (!loaded.TryGetValue(path, out value) || !value)
-            {
-                value = load(path);
-                if (value) loaded[path] = value;
-            }
-            return value;
         }
 
         private static string Name(string name)

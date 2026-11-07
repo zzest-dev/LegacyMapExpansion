@@ -8,7 +8,7 @@ namespace LegacyMapExpansion
         private static ParticleSystem impactParticles;
         private static bool impactLoaded;
 
-        internal static void Prepare(GameObject prefab)
+        internal static void Prepare(GameObject prefab, bool visuals)
         {
             if (prefab.name == "City_Props_Barrier_1")
                 foreach (Transform child in prefab.transform)
@@ -20,7 +20,7 @@ namespace LegacyMapExpansion
                     body.mass = 8f; body.isKinematic = true; body.useGravity = true;
                     var release = child.GetComponent<KinematicToDynamic>();
                     if (!release) release = child.gameObject.AddComponent<KinematicToDynamic>();
-                    release.maxImpulce = 120f; release.Particles = ImpactParticles();
+                    release.maxImpulce = 120f; release.Particles = visuals ? ImpactParticles() : null;
                 }
             foreach (var light in prefab.GetComponentsInChildren<Light>(true))
             {
@@ -44,7 +44,7 @@ namespace LegacyMapExpansion
                 var destruction = owner.AddComponent<Destruction>();
                 destruction.maxImpulce = prefab.name == "City_Props_Lantern_1" ? 2000f : 1000f;
                 destruction.DestroedObject = transform.gameObject;
-                destruction.Particles = ImpactParticles();
+                destruction.Particles = visuals ? ImpactParticles() : null;
             }
             if (prefab.name.StartsWith("Road_signature_", StringComparison.Ordinal) || prefab.name.IndexOf("stuf", StringComparison.OrdinalIgnoreCase) >= 0)
                 foreach (var body in prefab.GetComponentsInChildren<Rigidbody>(true))
@@ -56,7 +56,7 @@ namespace LegacyMapExpansion
                     if (fragment || body.GetComponent<Destruction>()) continue;
                     var dynamic = body.gameObject.AddComponent<KinematicToDynamic>();
                     dynamic.maxImpulce = 120f;
-                    dynamic.Particles = ImpactParticles();
+                    dynamic.Particles = visuals ? ImpactParticles() : null;
                 }
         }
 

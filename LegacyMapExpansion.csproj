@@ -15,6 +15,8 @@
     <MapBundlePath Condition="'$(MapPlatform)' == 'Windows'">$(ResourcesDir)\map1018.bundle</MapBundlePath>
     <MapBundlePath Condition="'$(MapPlatform)' == 'Linux'">$(ResourcesDir)\Linux\map1018.bundle</MapBundlePath>
     <OutputPath Condition="'$(MapPlatform)' == 'Linux'">bin\$(Configuration)\Linux\</OutputPath>
+    <ServerMapBundlePath Condition="'$(MapPlatform)' == 'Windows'">$(ResourcesDir)\map1018-server.bundle</ServerMapBundlePath>
+    <ServerMapBundlePath Condition="'$(MapPlatform)' == 'Linux'">$(ResourcesDir)\Linux\map1018-server.bundle</ServerMapBundlePath>
     <IntermediateOutputPath Condition="'$(MapPlatform)' == 'Linux'">obj\$(Configuration)\Linux\</IntermediateOutputPath>
     <ManagedDir Condition="'$(ManagedDir)' == ''">$(GameDir)\game_Data\Managed</ManagedDir>
     <BepInExDir Condition="'$(BepInExDir)' == ''">$(GameDir)\BepInEx\core</BepInExDir>
@@ -22,6 +24,7 @@
   <ItemGroup>
     <Compile Include="src\**\*.cs" />
     <EmbeddedResource Include="$(MapBundlePath)" LogicalName="LegacyMapExpansion.bundle" />
+    <EmbeddedResource Include="$(ServerMapBundlePath)" LogicalName="LegacyMapExpansion.serverbundle" />
     <EmbeddedResource Include="$(ResourcesDir)\map94-patched.bytes" LogicalName="LegacyMapExpansion.map" />
     <EmbeddedResource Include="$(ResourcesDir)\compatibility.json" LogicalName="LegacyMapExpansion.compatibility" />
     <EmbeddedResource Include="$(ResourcesDir)\native-ground-materials.json" LogicalName="LegacyMapExpansion.groundmaterials" />
@@ -45,6 +48,7 @@
   <Target Name="ValidateGameDirectory" BeforeTargets="ResolveReferences">
     <Error Condition="'$(MapPlatform)' != 'Windows' and '$(MapPlatform)' != 'Linux'" Text="MapPlatform must be Windows or Linux." />
     <Error Condition="!Exists('$(MapBundlePath)')" Text="Map bundle is missing for $(MapPlatform). Build the matching Unity resources first." />
+    <Error Condition="!Exists('$(ServerMapBundlePath)')" Text="Server map bundle is missing for $(MapPlatform). Run MapServerBuild.Build first." />
     <Warning Condition="!Exists('$(BigCityLegacyDll)')" Code="LME001" Text="BigCityLegacy.dll not found. Install BCL 1.4.2+ or pass -p:BigCityLegacyDll=absolute/path/BigCityLegacy.dll." />
     <Error Condition="!Exists('$(BigCityLegacyDll)')" Text="BCL 1.4.2+ is required for activation and restart API." />
     <Error Condition="'$(GameDir)' == ''" Text="Set GameDir to the MadOut2 PC 9.4 installation directory." />

@@ -24,6 +24,14 @@
     "Resources/Linux/map1018.bundle": {
       "bytes": 139342562,
       "sha256": "9dd088f8fc63086fdf9b1b5b8723eafeb4feed660ec0e5fa8d103bc7e1dffd68"
+    },
+    "Resources/map1018-server.bundle": {
+      "bytes": 19482937,
+      "sha256": "44eaa44df56ee74cc09df9a8e2b0a99a6da35d9f6db316626840d4e16c1908b0"
+    },
+    "Resources/Linux/map1018-server.bundle": {
+      "bytes": 19486393,
+      "sha256": "0ad899f0aef851f0ee6fbb0b78288e88e4939b7829ab9aba46619fb922539de2"
     }
   }
 }
